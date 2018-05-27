@@ -2,6 +2,7 @@ package main
 
 import (
   "net/url"
+  "strings"
 )
 
 type Currency struct {
@@ -17,7 +18,7 @@ var currencies Currencies
 // currency.go
 func CurrencyFindByCode(code string) Currency{
   for i := range currencies {
-    if currencies[i].Code == code {
+    if strings.ToLower(currencies[i].Code) == strings.ToLower(code) {
       return currencies[i]
     }
   }
