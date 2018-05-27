@@ -2,19 +2,13 @@ package main
 
 var routes = Routes{
   Route{
-    "Index",
-    "GET",
-    "/",
-    Index,
-  },
-  Route{
-    "TodoIndex",
+    "CurrenciesIndex",
     "GET",
     "/currencies",
     CurrenciesIndex,
   },
   Route{
-    "TodoShow",
+    "CurrencyShow",
     "GET",
     "/currencies/{code}",
     CurrencyShow,
