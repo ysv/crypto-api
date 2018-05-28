@@ -27,7 +27,8 @@ func CurrencyFindByCode(code string) Currency{
 
 // currency.go
 func LoadCurrencies()  {
-  currencies = append(currencies, Currency{Code: "BTC", Symbol: "B"})
+  btcUrl, _ := url.Parse("http://yaroslav:changeme@127.0.0.1:18332")
+  currencies = append(currencies, Currency{Code: "BTC", Symbol: "B", JSONRPCEndpoint: btcUrl})})
   currencies = append(currencies, Currency{Code: "ETH", Symbol: "E"})
 }
 
