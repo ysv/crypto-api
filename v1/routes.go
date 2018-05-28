@@ -3,13 +3,13 @@ package main
 var routes = Routes{
   Route{
     "CurrenciesIndex",
-    "GET",
+    "POST",
     "/currencies",
     CurrenciesIndex,
   },
   Route{
     "CurrencyShow",
-    "GET",
+    "POST",
     "/currencies/{code}",
     CurrencyShow,
   },

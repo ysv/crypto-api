@@ -49,7 +49,7 @@ func LoadKeys() {
 func GenerateSessionJWT(profile UserProfile) (string){
   claims := &Authentication{
     &jwt.StandardClaims{
-      ExpiresAt: time.Now().Add(time.Minute * 1).Unix(),
+      ExpiresAt: time.Now().Add(time.Hour * 1).Unix(),
     },
     profile,
   }
@@ -63,6 +63,16 @@ func GenerateSessionJWT(profile UserProfile) (string){
     fmt.Println("Bad token")
   }
   return tokenString
+}
+
+func ValidateJWT(stringJWT string) (UserProfile, error) {
+  user := Authentication{}
+
+  jwt.ParseWithClaims(stringJWT, &user, func(token *jwt.Token) (interface{}, error) {
+    return verifyKey, nil
+  })
+
+  return FindUser(user.UserProfile)
 }
 
 func GenerateOrLoadKeys(){
