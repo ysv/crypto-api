@@ -13,4 +13,10 @@ var routes = Routes{
     "/currencies/{code}",
     CurrencyShow,
   },
+  Route{
+    "Auth",
+    "POST",
+    "/auth/login",
+    AuthCreate,
+  },
 }
