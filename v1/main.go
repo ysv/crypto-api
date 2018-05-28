@@ -7,7 +7,7 @@ import (
 
 
 func main() {
-
+  // Initialize router.
   router := NewRouter()
 
   // Load currencies.
