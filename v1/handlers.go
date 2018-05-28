@@ -4,7 +4,6 @@ import (
   "net/http"
   "encoding/json"
   "github.com/gorilla/mux"
-  "fmt"
 )
 
 func setContentTypeJSON(w http.ResponseWriter){
@@ -19,7 +18,6 @@ func CurrenciesIndex(w http.ResponseWriter, r *http.Request){
 
 func CurrencyShow(w http.ResponseWriter, r *http.Request) {
   setContentTypeJSON(w)
-
   vars := mux.Vars(r)
   currencyId := vars["code"]
   w.WriteHeader(http.StatusOK)
@@ -28,7 +26,12 @@ func CurrencyShow(w http.ResponseWriter, r *http.Request) {
 
 func AuthCreate(w http.ResponseWriter, r *http.Request)  {
   setContentTypeJSON(w)
-  var auth User
-  _ = json.NewDecoder(r.Body).Decode(&auth)
-
+  var user UserProfile
+  _ = json.NewDecoder(r.Body).Decode(&user)
+  if err := ValidateUser(user); err != nil{
+    w.WriteHeader(http.StatusForbidden)
+  } else {
+    w.WriteHeader(http.StatusOK)
+    //json.NewEncoder(w).Encode(CurrencyFindByCode(currencyId))
+  }
 }

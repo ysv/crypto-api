@@ -12,6 +12,8 @@ func main() {
 
   // Load currencies.
   LoadCurrencies()
+  LoadUsers()
+  LoadKeys()
 
   // Start server.
   log.Fatal(http.ListenAndServe(":8080", router))
