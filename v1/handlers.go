@@ -28,8 +28,7 @@ func CurrencyShow(w http.ResponseWriter, r *http.Request) {
 
 func AuthCreate(w http.ResponseWriter, r *http.Request)  {
   setContentTypeJSON(w)
-  var auth Auth
+  var auth User
   _ = json.NewDecoder(r.Body).Decode(&auth)
-  fmt.Print(auth)
-  w.WriteHeader(http.StatusOK)
+
 }
