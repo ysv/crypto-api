@@ -9,6 +9,7 @@ import (
   "fmt"
   "encoding/pem"
   "crypto/x509"
+  "time"
 )
 
 type Authentication struct {
@@ -29,7 +30,7 @@ var (
 // read the key files before starting http handlers
 func LoadKeys() {
   if _, err := os.Stat(privKeyPath); os.IsNotExist(err) {
-    GenerateKeys()
+    GenerateOrLoadKeys()
   }
 
   signBytes, err := ioutil.ReadFile(privKeyPath)
@@ -45,7 +46,26 @@ func LoadKeys() {
   checkError(err)
 }
 
-func GenerateKeys(){
+func GenerateSessionJWT(profile UserProfile) (string){
+  claims := &Authentication{
+    &jwt.StandardClaims{
+      ExpiresAt: time.Now().Add(time.Minute * 1).Unix(),
+    },
+    profile,
+  }
+
+  // create a signer for rsa 256
+  t := jwt.NewWithClaims(jwt.GetSigningMethod("RS256"), claims)
+
+  // set the expire time
+  tokenString, err := t.SignedString(signKey)
+  if err != nil {
+    fmt.Println("Bad token")
+  }
+  return tokenString
+}
+
+func GenerateOrLoadKeys(){
   reader := rand.Reader
   bitSize := 2048
 

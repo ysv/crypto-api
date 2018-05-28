@@ -32,6 +32,9 @@ func AuthCreate(w http.ResponseWriter, r *http.Request)  {
     w.WriteHeader(http.StatusForbidden)
   } else {
     w.WriteHeader(http.StatusOK)
-    //json.NewEncoder(w).Encode(CurrencyFindByCode(currencyId))
+    var sessionJWT = GenerateSessionJWT(user)
+    json.NewEncoder(w).Encode(struct {
+      Token string `json:"token"`
+    }{sessionJWT})
   }
 }
