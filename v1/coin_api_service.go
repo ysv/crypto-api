@@ -15,6 +15,12 @@ type CoinAPIService interface {
   getBalance() RPCResponseFloatRes
   sendToAddress(address string, amount int)  RPCResponseStringRes
 }
+//
+//type Currency struct {
+//  Code            string    `json:"code"`
+//  Symbol          string    `json:"symbol"`
+//  JSONRPCEndpoint *url.URL  `json:"-"`
+//}
 
 type BTC struct{
   Currency
@@ -44,9 +50,10 @@ func GetBalance(currency Currency) RPCResponseFloatRes {
   return RPCResponseFloatRes{}
 }
 
-func SendToAddress(currency Currency, address string, amount float32) RPCResponseStringRes{
+func SendToAddress(currency Currency, address string, amount string) RPCResponseStringRes{
   if currency.Code == "BTC" {
     service := BTC{currency}
+    fmt.Println(address, amount)
     return service.sendToAddress(address, amount)
   }
   return RPCResponseStringRes{}
@@ -55,6 +62,7 @@ func SendToAddress(currency Currency, address string, amount float32) RPCRespons
 func (btc *BTC) rpcCall(method string, optParams ...string) *http.Response{
   for i, el := range optParams {
     optParams[i] = strconv.Quote(el)
+    fmt.Println(el)
   }
   optParamsString := strings.Join(optParams, ",")
   jsonParamsSlice := []string{ `"method":"` + method + `"`}
@@ -93,8 +101,8 @@ func (btc *BTC) getBalance() RPCResponseFloatRes {
   return rpcResponse
 }
 
-func (btc *BTC) sendToAddress(address string, amount float32)  RPCResponseStringRes{
-  response := btc.rpcCall("sendtoaddress", address, fmt.Sprintf("%.8f", amount))
+func (btc *BTC) sendToAddress(address string, amount string)  RPCResponseStringRes{
+  response := btc.rpcCall("sendtoaddress", address, amount)
   defer response.Body.Close()
   rpcResponse := RPCResponseStringRes{}
   json.NewDecoder(response.Body).Decode(&rpcResponse)
@@ -114,6 +122,6 @@ func (btc *BTC) sendToAddress(address string, amount float32)  RPCResponseString
 //  res, _ = json.Marshal(btc.getBalance())
 //  fmt.Println(string(res))
 //
-//  res, _ = json.Marshal(btc.sendToAddress("2MtKeBvWttU36TfJARKcPbZgoLQ7KXwB7fT", 10))
+//  res, _ = json.Marshal(btc.sendToAddress("2MtKeBvWttU36TfJARKcPbZgoLQ7KXwB7fT", "10))
 //  fmt.Println(string(res))
 //}
