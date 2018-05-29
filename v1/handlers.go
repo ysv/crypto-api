@@ -6,6 +6,11 @@ import (
   "github.com/gorilla/mux"
 )
 
+type SendToAddressParams struct {
+  Address string  `json:"address"`
+  Amount  float32 `json:"amount"`
+}
+
 func setContentTypeJSON(w http.ResponseWriter){
   w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 }
@@ -96,6 +101,8 @@ func CurrencySendToAddress(w http.ResponseWriter, r *http.Request){
   vars := mux.Vars(r)
   currencyId := vars["code"]
   currency := CurrencyFindByCode(currencyId)
+  params := SendToAddressParams{}
+  _ = json.NewDecoder(r.Body).Decode(&params)
   w.WriteHeader(http.StatusOK)
-  json.NewEncoder(w).Encode(SendToAddress(currency, "2MshWCAuqgL9SyjkVoxGvrF6wwepxaacVUL", 10))
+  json.NewEncoder(w).Encode(SendToAddress(currency, params.Address, params.Amount))
 }

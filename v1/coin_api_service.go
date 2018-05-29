@@ -44,7 +44,7 @@ func GetBalance(currency Currency) RPCResponseFloatRes {
   return RPCResponseFloatRes{}
 }
 
-func SendToAddress(currency Currency, address string, amount int) RPCResponseStringRes{
+func SendToAddress(currency Currency, address string, amount float32) RPCResponseStringRes{
   if currency.Code == "BTC" {
     service := BTC{currency}
     return service.sendToAddress(address, amount)
@@ -93,8 +93,8 @@ func (btc *BTC) getBalance() RPCResponseFloatRes {
   return rpcResponse
 }
 
-func (btc *BTC) sendToAddress(address string, amount int)  RPCResponseStringRes{
-  response := btc.rpcCall("sendtoaddress", address, strconv.Itoa(amount))
+func (btc *BTC) sendToAddress(address string, amount float32)  RPCResponseStringRes{
+  response := btc.rpcCall("sendtoaddress", address, fmt.Sprintf("%.8f", amount))
   defer response.Body.Close()
   rpcResponse := RPCResponseStringRes{}
   json.NewDecoder(response.Body).Decode(&rpcResponse)
