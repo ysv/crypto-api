@@ -23,6 +23,21 @@ func AuthMiddleware(w http.ResponseWriter, r *http.Request) (error){
   return nil
 }
 
+func AuthCreate(w http.ResponseWriter, r *http.Request)  {
+  setContentTypeJSON(w)
+  var user UserProfile
+  _ = json.NewDecoder(r.Body).Decode(&user)
+  if err := ValidateUser(user); err != nil{
+    w.WriteHeader(http.StatusForbidden)
+  } else {
+    w.WriteHeader(http.StatusOK)
+    var sessionJWT = GenerateSessionJWT(user)
+    json.NewEncoder(w).Encode(struct {
+      Token string `json:"token"`
+    }{sessionJWT})
+  }
+}
+
 func CurrenciesIndex(w http.ResponseWriter, r *http.Request){
   setContentTypeJSON(w)
   err := AuthMiddleware(w, r)
@@ -45,17 +60,42 @@ func CurrencyShow(w http.ResponseWriter, r *http.Request) {
   json.NewEncoder(w).Encode(CurrencyFindByCode(currencyId))
 }
 
-func AuthCreate(w http.ResponseWriter, r *http.Request)  {
+func CurrencyGetNewAddress(w http.ResponseWriter, r *http.Request){
   setContentTypeJSON(w)
-  var user UserProfile
-  _ = json.NewDecoder(r.Body).Decode(&user)
-  if err := ValidateUser(user); err != nil{
-    w.WriteHeader(http.StatusForbidden)
-  } else {
-    w.WriteHeader(http.StatusOK)
-    var sessionJWT = GenerateSessionJWT(user)
-    json.NewEncoder(w).Encode(struct {
-      Token string `json:"token"`
-    }{sessionJWT})
+  err := AuthMiddleware(w, r)
+  if err != nil{
+    return
   }
+  vars := mux.Vars(r)
+  currencyId := vars["code"]
+  currency := CurrencyFindByCode(currencyId)
+  w.WriteHeader(http.StatusOK)
+  json.NewEncoder(w).Encode(GetNewAddress(currency))
+}
+
+
+func CurrencyGetBalance(w http.ResponseWriter, r *http.Request){
+  setContentTypeJSON(w)
+  err := AuthMiddleware(w, r)
+  if err != nil{
+    return
+  }
+  vars := mux.Vars(r)
+  currencyId := vars["code"]
+  currency := CurrencyFindByCode(currencyId)
+  w.WriteHeader(http.StatusOK)
+  json.NewEncoder(w).Encode(GetBalance(currency))
+}
+
+func CurrencySendToAddress(w http.ResponseWriter, r *http.Request){
+  setContentTypeJSON(w)
+  err := AuthMiddleware(w, r)
+  if err != nil{
+    return
+  }
+  vars := mux.Vars(r)
+  currencyId := vars["code"]
+  currency := CurrencyFindByCode(currencyId)
+  w.WriteHeader(http.StatusOK)
+  json.NewEncoder(w).Encode(SendToAddress(currency, "2MshWCAuqgL9SyjkVoxGvrF6wwepxaacVUL", 10))
 }

@@ -7,13 +7,12 @@ import (
   "encoding/json"
   "strings"
   "strconv"
-  "net/url"
 )
 
 type CoinAPIService interface {
   rpcCall(method string, optParams ...string) *http.Response
   getNewAddress() RPCResponseStringRes
-  getBalance()  RPCResponseIntRes
+  getBalance() RPCResponseFloatRes
   sendToAddress(address string, amount int)  RPCResponseStringRes
 }
 
@@ -25,8 +24,32 @@ type RPCResponseStringRes struct {
   Result string `json:"result"`
 }
 
-type RPCResponseIntRes struct {
-  Result int `json:"result"`
+type RPCResponseFloatRes struct {
+  Result float32 `json:"result"`
+}
+
+func GetNewAddress(currency Currency) RPCResponseStringRes{
+  if currency.Code == "BTC" {
+    service := BTC{currency}
+    return service.getNewAddress()
+  }
+  return RPCResponseStringRes{}
+}
+
+func GetBalance(currency Currency) RPCResponseFloatRes {
+  if currency.Code == "BTC" {
+    service := BTC{currency}
+    return service.getBalance()
+  }
+  return RPCResponseFloatRes{}
+}
+
+func SendToAddress(currency Currency, address string, amount int) RPCResponseStringRes{
+  if currency.Code == "BTC" {
+    service := BTC{currency}
+    return service.sendToAddress(address, amount)
+  }
+  return RPCResponseStringRes{}
 }
 
 func (btc *BTC) rpcCall(method string, optParams ...string) *http.Response{
@@ -61,10 +84,10 @@ func (btc *BTC) getNewAddress() RPCResponseStringRes{
   return rpcResponse
 }
 
-func (btc *BTC) getBalance()  RPCResponseIntRes{
+func (btc *BTC) getBalance() RPCResponseFloatRes {
   response := btc.rpcCall("getbalance")
   defer response.Body.Close()
-  rpcResponse := RPCResponseIntRes{}
+  rpcResponse := RPCResponseFloatRes{}
   json.NewDecoder(response.Body).Decode(&rpcResponse)
   fmt.Println("getbalance: ", rpcResponse.Result)
   return rpcResponse
@@ -79,18 +102,18 @@ func (btc *BTC) sendToAddress(address string, amount int)  RPCResponseStringRes{
   return rpcResponse
 }
 
-func main()  {
-
-  btcUrl, _ := url.Parse("http://yaroslav:changeme@127.0.0.1:18332")
-  fmt.Println(btcUrl.String())
-  btc := &BTC{ Currency{"BTC", "B", btcUrl}}
-
-  res, _ := json.Marshal(btc.getNewAddress())
-  fmt.Println(string(res))
-
-  res, _ = json.Marshal(btc.getBalance())
-  fmt.Println(string(res))
-
-  res, _ = json.Marshal(btc.sendToAddress("2MtKeBvWttU36TfJARKcPbZgoLQ7KXwB7fT", 10))
-  fmt.Println(string(res))
-}
+//func main()  {
+//
+//  btcUrl, _ := url.Parse("http://yaroslav:changeme@127.0.0.1:18332")
+//  fmt.Println(btcUrl.String())
+//  btc := &BTC{ Currency{"BTC", "B", btcUrl}}
+//
+//  res, _ := json.Marshal(btc.getNewAddress())
+//  fmt.Println(string(res))
+//
+//  res, _ = json.Marshal(btc.getBalance())
+//  fmt.Println(string(res))
+//
+//  res, _ = json.Marshal(btc.sendToAddress("2MtKeBvWttU36TfJARKcPbZgoLQ7KXwB7fT", 10))
+//  fmt.Println(string(res))
+//}

@@ -14,6 +14,24 @@ var routes = Routes{
     CurrencyShow,
   },
   Route{
+    "CurrencyShow",
+    "POST",
+    "/currencies/{code}/getnewaddress",
+    CurrencyGetNewAddress,
+  },
+  Route{
+    "CurrencyShow",
+    "POST",
+    "/currencies/{code}/getbalance",
+    CurrencyGetBalance,
+  },
+  Route{
+    "CurrencyShow",
+    "POST",
+    "/currencies/{code}/sendtoaddress",
+    CurrencySendToAddress,
+  },
+  Route{
     "UserProfile",
     "POST",
     "/auth/login",
