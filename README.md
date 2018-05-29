@@ -1,1 +1,1 @@
-# Crytpo API
+# Crypto API
